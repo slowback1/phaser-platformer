@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM", "scripthost"],
+    "moduleResolution": "Node",
+    "strict": false,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "types": ["vite/client", "node", "jest", "cypress"],
+    "noEmit": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false
+  },
+  "include": ["./src/**/*.ts", "./src/**/*.tsx", "./src/**/*.js", "./src/**/*.jsx", "./src/**/*.json", "./src/**/*.d.ts"],
+  "exclude": ["node_modules", "dist", "build", "coverage", "cypress", "jest", "scripts", "public", "src/**/*.spec.ts", "src/**/*.spec.tsx", "src/**/*.spec.js", "src/**/*.spec.jsx"]
+}

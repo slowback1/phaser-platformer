@@ -1,0 +1,18 @@
+{
+  "arrowParens": "avoid",
+  "endOfLine": "lf",
+  "printWidth": 120,
+  "proseWrap": "preserve",
+  "tabWidth": 4,
+  "trailingComma": "all",
+  "useTabs": true,
+  "vueIndentScriptAndStyle": true,
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "printWidth": 200
+      }
+    }
+  ]
+}

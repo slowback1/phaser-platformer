@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM", "scripthost"],
+    "moduleResolution": "Node",
+    "strict": false,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "types": [ "cypress", "node", "jest"],
+    "noEmit": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false
+  },
+  "include": ["./cypress/**/*.ts", "./cypress/**/*.js", "./cypress/**/*.json", "./cypress/**/*.d.ts"],
+}

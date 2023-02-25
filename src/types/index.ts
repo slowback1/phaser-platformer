@@ -1,0 +1,1 @@
+export type AssetKeyConfig = {[key: string]: string};
