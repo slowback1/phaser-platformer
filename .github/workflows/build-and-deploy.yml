@@ -32,7 +32,7 @@ jobs:
         path: dist/*
   deploy:
     runs-on: ubuntu-latest
-    depends-on: build
+    needs: build
     steps:
       - uses: actions/download-artifact@v3.0.2
         with:
