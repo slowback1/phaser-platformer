@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -32,6 +32,7 @@ jobs:
         path: dist/*
   deploy:
     runs-on: ubuntu-latest
+    depends-on: build
     steps:
       - uses: actions/download-artifact@v3.0.2
         with:
