@@ -59,7 +59,7 @@ describe("controlManager", () => {
 			controllerManager.subscribe(subscriberMock);
 			const event: KeyboardEvent = { key: "ArrowUp" } as KeyboardEvent;
 			controllerManager.onKeyDown(event);
-			expect(subscriberMock).toBeCalledWith(ButtonType.UP);
+			expect(subscriberMock).toBeCalledWith([ButtonType.UP]);
 		});
 	});
 });

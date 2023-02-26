@@ -28,7 +28,7 @@ const buttonMap: { [key: string]: ButtonType } = {
 	r: ButtonType.R,
 };
 
-type subscription = { func: (button: ButtonType) => void; key: number };
+type subscription = { func: (buttons: ButtonType[]) => void; key: number };
 
 export default class ControlManager {
 	private static instance: ControlManager;
@@ -44,14 +44,14 @@ export default class ControlManager {
 	private subscribers: subscription[] = [];
 	private currentSeed: number = 0;
 
-	subscribe(subscriber: (button: ButtonType) => void): () => void {
+	subscribe(subscriber: (button: ButtonType[]) => void): () => void {
 		this.subscribers.push({ func: subscriber, key: ++this.currentSeed });
 		const key = this.currentSeed;
 		return () => {
 			this.subscribers = this.subscribers.filter(s => s.key !== key);
 		};
 	}
-	getSubscriptions(): ((button: ButtonType) => void)[] {
+	getSubscriptions(): ((buttons: ButtonType[]) => void)[] {
 		return this.subscribers.map(s => s.func);
 	}
 	clearSubscriptions() {
@@ -60,11 +60,12 @@ export default class ControlManager {
 	onKeyDown(event: KeyboardEvent) {
 		const button = buttonMap[event.key];
 		if (button) {
-			this.notifySubscribers(button);
+			this.notifySubscribers([button]);
 		}
 	}
+	cyclePhaserKeys(input: Phaser.Input.InputPlugin) {}
 
-	private notifySubscribers(button: ButtonType) {
+	private notifySubscribers(button: ButtonType[]) {
 		this.subscribers.forEach(s => s.func(button));
 	}
 }

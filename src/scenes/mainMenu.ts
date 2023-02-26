@@ -79,9 +79,16 @@ export default class MainMenu extends GameScene {
 
 	confirmMenuSelection() {
 		this.writeDebugData("main-menu__button-pressed", this.currentCursorPosition);
+
+		switch (this.currentCursorPosition) {
+			case 1:
+				this.scene.start(SCENE_KEYS.LEVEL_1);
+				break;
+		}
 	}
 
 	preload() {
+		super.preload();
 		this.load.spritesheet(ASSET_KEYS.MENU_BOX, "assets/menu-box.png", {
 			frameHeight: 32,
 			frameWidth: 32,
