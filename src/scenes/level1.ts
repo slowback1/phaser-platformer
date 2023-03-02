@@ -15,8 +15,8 @@ export default class Level1 extends GameScene {
 		super({ key: SCENE_KEYS.LEVEL_1 });
 	}
 
-	onButtonPress(button: ButtonType): void {
-		this.playerManager.handleButtonPress(button);
+	onButtonPress(buttons: ButtonType[]): void {
+		this.playerManager.handleButtonPress(buttons, { x: this.player.x, y: this.player.y });
 	}
 
 	preload() {
@@ -29,21 +29,19 @@ export default class Level1 extends GameScene {
 	create() {
 		this.drawGroundTilesFromStartToFinish();
 		this.spawnPlayer();
+		this.spawnEnemy();
 	}
 	groundTiles: Phaser.GameObjects.Sprite[] = [];
 	drawGroundTilesFromStartToFinish() {
-		//draw 25 tiles from the ground tiles sprite sheet across the bottom of the screen
 		for (let i = 0; i < 50; i++) {
 			const sprite = this.add.sprite(32 * i, 480 - 32, ASSET_KEYS.GROUND_TILES, 0);
-			//add collision to the sprite
 			this.physics.add.existing(sprite);
-			//set the sprite to be static so it doesn't move when the player collides with it
 
 			(sprite.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
 			(sprite.body as Phaser.Physics.Arcade.Body).setImmovable(true);
 
-			//set the sprite so that the player can use it as ground
 			(sprite.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true);
+
 			this.groundTiles.push(sprite);
 		}
 	}
@@ -54,7 +52,9 @@ export default class Level1 extends GameScene {
 		this.player.setBounce(0.2);
 		this.player.setGravityY(300);
 
-		this.physics.add.collider(this.player, this.groundTiles);
+		this.physics.add.collider(this.player, this.groundTiles, () => {
+			this.playerManager.handleGroundTouch();
+		});
 
 		this.playerManager = new PlayerManager(
 			this.player.setVelocityX.bind(this.player),
@@ -62,7 +62,27 @@ export default class Level1 extends GameScene {
 		);
 	}
 
-	update() {
+	spawnEnemy() {
+		const enemy = this.physics.add.sprite(32 * 5, 480 - 128, ASSET_KEYS.ENEMY);
+		enemy.setCollideWorldBounds(true);
+		enemy.setBounce(0.2);
+		enemy.setGravityY(300);
+
+		this.physics.add.collider(enemy, this.groundTiles);
+		this.physics.add.collider(enemy, this.player, (e, p) => {
+			if (this.player.y < enemy.y) {
+				enemy.setFrame(1);
+				enemy.body.checkCollision.none = true;
+				enemy.setGravityY(0);
+				this.time.delayedCall(1000, () => {
+					e.destroy();
+				});
+			}
+		});
+	}
+
+	update(time, delta) {
+		super.update(time, delta);
 		this.writeDebugData("player__position-x", this.player.x);
 		this.writeDebugData("player__position-y", this.player.y);
 	}

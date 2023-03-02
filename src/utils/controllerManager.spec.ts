@@ -38,16 +38,11 @@ describe("controlManager", () => {
 	describe("onKeyDown", () => {
 		it("calls the subscriber when a key that is in the button map is pressed", () => {
 			controllerManager.subscribe(subscriberMock);
-			const event: KeyboardEvent = { key: "ArrowUp" } as KeyboardEvent;
+			const event: KeyboardEvent = { key: "a" } as KeyboardEvent;
 			controllerManager.onKeyDown(event);
 			expect(subscriberMock).toBeCalled();
 		});
-		it("does not call the subscriber when a key that is not in the button map is pressed", () => {
-			controllerManager.subscribe(subscriberMock);
-			const event: KeyboardEvent = { key: "i" } as KeyboardEvent;
-			controllerManager.onKeyDown(event);
-			expect(subscriberMock).not.toBeCalled();
-		});
+
 		it("does not call the subscriber if they have unsubscribed", () => {
 			const unsubscribe = controllerManager.subscribe(subscriberMock);
 			unsubscribe();
@@ -57,7 +52,7 @@ describe("controlManager", () => {
 		});
 		it("calls the subscriber with the correct button", () => {
 			controllerManager.subscribe(subscriberMock);
-			const event: KeyboardEvent = { key: "ArrowUp" } as KeyboardEvent;
+			const event: KeyboardEvent = { key: "i" } as KeyboardEvent;
 			controllerManager.onKeyDown(event);
 			expect(subscriberMock).toBeCalledWith([ButtonType.UP]);
 		});

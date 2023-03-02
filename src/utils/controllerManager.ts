@@ -1,3 +1,5 @@
+import { isKeyObject } from "util/types";
+
 export enum ButtonType {
 	A = "A",
 	B = "B",
@@ -14,10 +16,10 @@ export enum ButtonType {
 }
 
 const buttonMap: { [key: string]: ButtonType } = {
-	ArrowUp: ButtonType.UP,
-	ArrowDown: ButtonType.DOWN,
-	ArrowLeft: ButtonType.LEFT,
-	ArrowRight: ButtonType.RIGHT,
+	j: ButtonType.LEFT,
+	l: ButtonType.RIGHT,
+	i: ButtonType.UP,
+	k: ButtonType.DOWN,
 	z: ButtonType.A,
 	x: ButtonType.B,
 	a: ButtonType.X,
@@ -32,6 +34,7 @@ type subscription = { func: (buttons: ButtonType[]) => void; key: number };
 
 export default class ControlManager {
 	private static instance: ControlManager;
+	private keys: Phaser.Input.Keyboard.Key[];
 	static getInstance(): ControlManager {
 		if (!ControlManager.instance) {
 			ControlManager.instance = new ControlManager();
@@ -63,9 +66,33 @@ export default class ControlManager {
 			this.notifySubscribers([button]);
 		}
 	}
-	cyclePhaserKeys(input: Phaser.Input.InputPlugin) {}
+	createKeys(input: Phaser.Input.InputPlugin): void {
+		const keys: Phaser.Input.Keyboard.Key[] = [];
+		for (const key in buttonMap) {
+			let keyObject = input.keyboard.addKey(key);
+			keys.push(keyObject);
+		}
+		this.keys = keys;
+	}
+
+	cyclePhaserKeys() {
+		const buttons: ButtonType[] = [];
+		this.keys.forEach(key => {
+			if (key.isDown) {
+				buttons.push(buttonMap[key.originalEvent?.key]);
+			}
+		});
+		this.notifySubscribers(buttons);
+	}
 
 	private notifySubscribers(button: ButtonType[]) {
 		this.subscribers.forEach(s => s.func(button));
+	}
+
+	pressKey(key: string) {
+		const button = buttonMap[key];
+		if (button) {
+			this.notifySubscribers([button]);
+		}
 	}
 }

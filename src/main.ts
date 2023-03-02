@@ -2,6 +2,7 @@ import "./style.scss";
 import "phaser";
 import MainMenu from "./scenes/mainMenu";
 import Level1 from "./scenes/level1";
+import ControlManager from "./utils/controllerManager";
 
 const windowWidth = window.innerWidth - 450;
 const windowHeight = window.innerHeight - 450;
@@ -43,3 +44,9 @@ export class Game extends Phaser.Game {
 window.addEventListener("load", () => {
 	const game = new Game(GameConfig);
 });
+
+if (window["Cypress"]) {
+	window.addEventListener("keydown", e => {
+		ControlManager.getInstance().pressKey(e.key);
+	});
+}

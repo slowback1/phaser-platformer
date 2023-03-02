@@ -18,17 +18,10 @@ export default abstract class GameScene extends Phaser.Scene {
 	}
 
 	preload() {
-		this.registerKeyboardEvents();
 		this.registerButtonEventListener();
-		if (this.scene.key) this.writeDebugData("global__current-screen", this.scene.key);
-	}
+		ControlManager.getInstance().createKeys(this.input);
 
-	private registerKeyboardEvents() {
-		document.addEventListener("keydown", event => {
-			this.writeDebugData("key-down", event.key);
-			const controlManager = ControlManager.getInstance();
-			controlManager.onKeyDown(event);
-		});
+		if (this.scene.key) this.writeDebugData("global__current-screen", this.scene.key);
 	}
 
 	private unsubscribeButtonEventListener: () => void;
@@ -37,14 +30,13 @@ export default abstract class GameScene extends Phaser.Scene {
 	}
 
 	update(time, delta) {
-		//check if left arrow is pressed using phaser
-
-		ControlManager.getInstance().cyclePhaserKeys(this.input);
+		super.update(time, delta);
+		ControlManager.getInstance().cyclePhaserKeys();
 	}
 
 	destroy() {
 		this.unsubscribeButtonEventListener();
 	}
 
-	abstract onButtonPress(button: ButtonType): void;
+	abstract onButtonPress(buttons: ButtonType[]): void;
 }

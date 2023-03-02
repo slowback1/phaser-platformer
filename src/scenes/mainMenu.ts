@@ -1,7 +1,7 @@
 import GameScene from "./gameScene";
 import { AssetKeyConfig } from "../types";
 import { SCENE_KEYS } from "../utils/constants";
-import { ButtonType } from "../utils/controllerManager";
+import ControlManager, { ButtonType } from "../utils/controllerManager";
 
 type CursorPosition = 1 | 2 | 3;
 
@@ -63,18 +63,21 @@ export default class MainMenu extends GameScene {
 		this.updateCursorPosition(1);
 	}
 
-	onButtonPress(button: ButtonType) {
-		switch (button) {
-			case ButtonType.UP:
-				this.updateCursorPosition(this.getPreviousCursorPosition());
-				break;
-			case ButtonType.DOWN:
-				this.updateCursorPosition(this.getNextCursorPosition());
-				break;
-			case ButtonType.START:
-				this.confirmMenuSelection();
-				break;
-		}
+	onButtonPress(buttons: ButtonType[]) {
+		this.writeDebugData("main-menu__buttons-pressed", buttons.join(", "));
+		buttons.forEach(button => {
+			switch (button) {
+				case ButtonType.UP:
+					this.updateCursorPosition(this.getPreviousCursorPosition());
+					break;
+				case ButtonType.DOWN:
+					this.updateCursorPosition(this.getNextCursorPosition());
+					break;
+				case ButtonType.START:
+					this.confirmMenuSelection();
+					break;
+			}
+		});
 	}
 
 	confirmMenuSelection() {
@@ -108,5 +111,9 @@ export default class MainMenu extends GameScene {
 			value = 1;
 		}
 		return value as CursorPosition;
+	}
+
+	update(time, delta) {
+		super.update(time, delta);
 	}
 }

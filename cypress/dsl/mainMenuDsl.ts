@@ -7,11 +7,11 @@ export default class MainMenuDsl extends DSL {
 	}
 	goToPlay() {}
 	goToOptions() {
-		this.makeInput("ArrowDown");
+		this.makeInput("k");
 	}
 	goToQuit() {
-		this.makeInput("ArrowDown");
-		this.makeInput("ArrowDown");
+		this.makeInput("k");
+		this.makeInput("k");
 	}
 
 	validateCursorIsOnPlay() {

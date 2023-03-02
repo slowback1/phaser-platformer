@@ -9,16 +9,16 @@ export default class Level1Dsl extends DSL {
 
 	moveLeft() {
 		cy.wait(500);
-		this.makeInput("ArrowLeft");
+		this.makeInput("j");
 		cy.wait(250);
 	}
 	moveRight() {
 		cy.wait(500);
-		this.makeInput("ArrowRight");
+		this.makeInput("l");
 		cy.wait(250);
 	}
-	jump() {
-		cy.wait(250);
+	jump(shouldWait: boolean = true) {
+		if (shouldWait) cy.wait(1000);
 		this.makeInput("z");
 	}
 	getCurrentPlayerX(alias: string = "current-player-x") {
@@ -34,10 +34,22 @@ export default class Level1Dsl extends DSL {
 		});
 	}
 
+	validatePlayerCannotDoubleJump() {
+		this.jump();
+		CyGameDataUtilities.getDataByKey("player__position-y", "player-y").then(value => {
+			this.jump(false);
+			CyGameDataUtilities.getDataByKey("player__position-y", "player-y-2");
+			cy.get("@player-y-2").should("not.eql", value);
+		});
+	}
+
 	validatePlayerPositionIsGreaterThan(x: number) {
 		CyGameDataUtilities.validateKeyIsGreaterThanValue("player__position-x", x);
 	}
 	validatePlayerPositionIsLessThan(x: number) {
 		CyGameDataUtilities.validateKeyIsLessThanValue("player__position-x", x);
+	}
+	validatePositionIsHigherThan(y: number) {
+		CyGameDataUtilities.validateKeyIsGreaterThanValue("player__position-y", y);
 	}
 }

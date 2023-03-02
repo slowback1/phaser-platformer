@@ -21,4 +21,12 @@ describe("Level 1", () => {
 	it("the player stops moving after not pressing the right button for one second", () => {
 		pageObject.validatePlayerCanStop();
 	});
+
+	it("the player can jump", () => {
+		pageObject.jump();
+		pageObject.validatePositionIsHigherThan(32);
+	});
+	it("the player cannot double jump", () => {
+		pageObject.validatePlayerCannotDoubleJump();
+	});
 });
