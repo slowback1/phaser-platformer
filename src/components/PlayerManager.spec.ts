@@ -1,14 +1,33 @@
 import PlayerManager from "./PlayerManager";
 import { ButtonType } from "../utils/controllerManager";
+import PlayerSpriteManager from "./PlayerSpriteManager";
 
 describe("PlayerManager", () => {
 	let player: PlayerManager;
 	let velocityXMock: jest.Mock;
 	let velocityYMock: jest.Mock;
+	let onWalkMock: jest.Mock;
+	let onJumpMock: jest.Mock;
+	let onEndMock: jest.Mock;
+	let onDirectionMock: jest.Mock;
 	beforeEach(() => {
 		velocityXMock = jest.fn();
 		velocityYMock = jest.fn();
-		player = new PlayerManager(velocityXMock, velocityYMock);
+
+		onWalkMock = jest.fn();
+		onJumpMock = jest.fn();
+		onEndMock = jest.fn();
+		onDirectionMock = jest.fn();
+
+		let mockPlayerSpriteManager: PlayerSpriteManager;
+
+		mockPlayerSpriteManager = new PlayerSpriteManager(jest.fn(), jest.fn());
+		mockPlayerSpriteManager.onWalk = onWalkMock;
+		mockPlayerSpriteManager.onJump = onJumpMock;
+		mockPlayerSpriteManager.onEnd = onEndMock;
+		mockPlayerSpriteManager.onDirectionChange = onDirectionMock;
+
+		player = new PlayerManager(velocityXMock, velocityYMock, mockPlayerSpriteManager);
 	});
 
 	it("can construct without breaking", () => {
@@ -43,7 +62,6 @@ describe("PlayerManager", () => {
 		const argument = velocityXMock.mock.calls[velocityXMock.mock.calls.length - 1][0];
 		expect(argument).toBe(0);
 	});
-
 	it("does not allow the player to jump higher than the max jump height", () => {
 		player.handleButtonPress([ButtonType.A], { x: 0, y: 0 });
 		player.handleButtonPress([ButtonType.A], { x: 0, y: 120 });
@@ -65,7 +83,6 @@ describe("PlayerManager", () => {
 		const secondArgument = velocityYMock.mock.calls[velocityYMock.mock.calls.length - 1][0];
 		expect(secondArgument).toBeGreaterThan(firstArgument);
 	});
-
 	it("allows the player to jump again after landing", () => {
 		player.handleButtonPress([ButtonType.A], { x: 0, y: 0 });
 		const firstArgument = velocityYMock.mock.calls[velocityYMock.mock.calls.length - 1][0];
@@ -77,5 +94,39 @@ describe("PlayerManager", () => {
 		expect(velocityYMock).toHaveBeenCalled();
 		const secondArgument = velocityYMock.mock.calls[velocityYMock.mock.calls.length - 1][0];
 		expect(secondArgument).toEqual(firstArgument);
+	});
+
+	describe("player sprite management", () => {
+		it("calls onWalk when pressing the left button", () => {
+			player.handleButtonPress([ButtonType.LEFT], { x: 0, y: 0 });
+			expect(onWalkMock).toHaveBeenCalled();
+		});
+		it("calls onWalk when pressing the right button", () => {
+			player.handleButtonPress([ButtonType.RIGHT], { x: 0, y: 0 });
+			expect(onWalkMock).toHaveBeenCalled();
+		});
+		it("calls onJump when pressing the A button", () => {
+			player.handleButtonPress([ButtonType.A], { x: 0, y: 0 });
+			expect(onJumpMock).toHaveBeenCalled();
+		});
+
+		it("calls onDirectionChange when pressing the left button", () => {
+			player.handleButtonPress([ButtonType.LEFT], { x: 0, y: 0 });
+			expect(onDirectionMock).toHaveBeenCalled();
+		});
+		it("calls onDirectionChange when pressing the right button", () => {
+			player.handleButtonPress([ButtonType.RIGHT], { x: 0, y: 0 });
+			expect(onDirectionMock).toHaveBeenCalled();
+		});
+		it("continues calling onJump after releasing the A button but before touching the ground", () => {
+			player.handleButtonPress([ButtonType.A], { x: 0, y: 0 });
+			player.handleButtonPress([], { x: 0, y: 10 });
+			expect(onJumpMock).toHaveBeenCalledTimes(2);
+		});
+
+		it("calls onEnd when not pressing any buttons", () => {
+			player.handleButtonPress([], { x: 0, y: 0 });
+			expect(onEndMock).toHaveBeenCalled();
+		});
 	});
 });

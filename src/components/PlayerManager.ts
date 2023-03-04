@@ -1,6 +1,7 @@
 import { ButtonType } from "../utils/controllerManager";
 import hasButton from "../utils/hasButton";
-import { Point } from "../types";
+import { Direction, Point } from "../types";
+import PlayerSpriteManager from "./PlayerSpriteManager";
 
 export default class PlayerManager {
 	private readonly INITIAL_HORIZONTAL_VELOCITY: number = 180;
@@ -9,7 +10,11 @@ export default class PlayerManager {
 	private readonly VERTICAL_TAPER: number = 25;
 	private readonly MAX_JUMP_HEIGHT: number = 100;
 
-	constructor(private setVelocityX: (x: number) => void, private setVelocityY: (y: number) => void) {}
+	constructor(
+		private setVelocityX: (x: number) => void,
+		private setVelocityY: (y: number) => void,
+		private spriteManager: PlayerSpriteManager,
+	) {}
 
 	private horizontalVelocity: number = 0;
 	private verticalVelocity: number = 0;
@@ -37,6 +42,25 @@ export default class PlayerManager {
 		if (!hasVerticalMovement) {
 			this.taperVerticalVelocity();
 			this.continueJump = false;
+		}
+		this.handleSpriteChanges(keys, hasHorizontalMovement);
+	}
+
+	private handleSpriteChanges(keys: ButtonType[], hasHorizontalMovement: boolean) {
+		if (hasButton(keys, ButtonType.A) || this.hasJumped) {
+			this.spriteManager.onJump();
+		} else if (hasHorizontalMovement) {
+			this.spriteManager.onWalk();
+		}
+		if (hasButton(keys, ButtonType.LEFT)) {
+			this.spriteManager.onDirectionChange(Direction.LEFT);
+		}
+		if (hasButton(keys, ButtonType.RIGHT)) {
+			this.spriteManager.onDirectionChange(Direction.RIGHT);
+		}
+
+		if (!hasHorizontalMovement && !this.hasJumped) {
+			this.spriteManager.onEnd();
 		}
 	}
 

@@ -2,11 +2,13 @@ import GameScene from "./gameScene";
 import { ButtonType } from "../utils/controllerManager";
 import { SCENE_KEYS } from "../utils/constants";
 import PlayerManager from "../components/PlayerManager";
+import { TileSetKeys } from "../utils/TileSetKeys";
+import PlayerSpriteManager from "../components/PlayerSpriteManager";
 
 const ASSET_KEYS = {
 	PLAYER: "player",
-	ENEMY: "enemy",
-	GROUND_TILES: "groundTiles",
+	TILESET: "tileset",
+	BACKGROUND: "background",
 };
 
 export default class Level1 extends GameScene {
@@ -22,8 +24,8 @@ export default class Level1 extends GameScene {
 	preload() {
 		super.preload();
 		this.load.spritesheet(ASSET_KEYS.PLAYER, "assets/player.png", { frameHeight: 32, frameWidth: 32 });
-		this.load.spritesheet(ASSET_KEYS.ENEMY, "assets/enemy.png", { frameHeight: 32, frameWidth: 32 });
-		this.load.spritesheet(ASSET_KEYS.GROUND_TILES, "assets/ground-tiles.png", { frameHeight: 32, frameWidth: 32 });
+		this.load.spritesheet(ASSET_KEYS.TILESET, "assets/tileset.png", { frameHeight: 32, frameWidth: 32 });
+		this.load.spritesheet(ASSET_KEYS.BACKGROUND, "assets/background.png", { frameHeight: 32, frameWidth: 32 });
 	}
 
 	create() {
@@ -33,19 +35,31 @@ export default class Level1 extends GameScene {
 	}
 	groundTiles: Phaser.GameObjects.Sprite[] = [];
 	drawGroundTilesFromStartToFinish() {
-		for (let i = 0; i < 50; i++) {
-			const sprite = this.add.sprite(32 * i, 480 - 32, ASSET_KEYS.GROUND_TILES, 0);
-			this.physics.add.existing(sprite);
+		const tileFrames: { xOffset: number; yOffset: number; frame: number }[] = [
+			{ xOffset: 0, yOffset: 0, frame: TileSetKeys.GREEN_TILE_TOP_1 },
+			{ xOffset: 1, yOffset: 0, frame: TileSetKeys.GREEN_TILE_TOP_2 },
+			{ xOffset: 0, yOffset: 1, frame: TileSetKeys.GREEN_TILE_BOTTOM_1 },
+			{ xOffset: 1, yOffset: 1, frame: TileSetKeys.GREEN_TILE_BOTTOM_2 },
+		];
 
-			(sprite.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
-			(sprite.body as Phaser.Physics.Arcade.Body).setImmovable(true);
+		for (let i = 0; i < 25; i++) {
+			for (let j = 0; j < tileFrames.length; j++) {
+				const { yOffset, xOffset, frame } = tileFrames[j];
 
-			(sprite.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true);
+				const sprite = this.add.sprite(32 * (i + xOffset), 480 - 32 - 32 * yOffset, ASSET_KEYS.TILESET, frame);
+				this.physics.add.existing(sprite);
 
-			this.groundTiles.push(sprite);
+				(sprite.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
+				(sprite.body as Phaser.Physics.Arcade.Body).setImmovable(true);
+
+				(sprite.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true);
+
+				this.groundTiles.push(sprite);
+			}
 		}
 	}
 	private playerManager: PlayerManager;
+
 	spawnPlayer() {
 		this.player = this.physics.add.sprite(32, 480 - 128, ASSET_KEYS.PLAYER);
 		this.player.setCollideWorldBounds(true);
@@ -55,15 +69,20 @@ export default class Level1 extends GameScene {
 		this.physics.add.collider(this.player, this.groundTiles, () => {
 			this.playerManager.handleGroundTouch();
 		});
+		const playerSpriteManager = new PlayerSpriteManager(
+			this.player.setFrame.bind(this.player),
+			this.player.setFlipX.bind(this.player),
+		);
 
 		this.playerManager = new PlayerManager(
 			this.player.setVelocityX.bind(this.player),
 			this.player.setVelocityY.bind(this.player),
+			playerSpriteManager,
 		);
 	}
 
 	spawnEnemy() {
-		const enemy = this.physics.add.sprite(32 * 5, 480 - 128, ASSET_KEYS.ENEMY);
+		const enemy = this.physics.add.sprite(32 * 5, 480 - 128, ASSET_KEYS.TILESET, TileSetKeys.ENEMY_1_IDLE);
 		enemy.setCollideWorldBounds(true);
 		enemy.setBounce(0.2);
 		enemy.setGravityY(300);
@@ -71,7 +90,7 @@ export default class Level1 extends GameScene {
 		this.physics.add.collider(enemy, this.groundTiles);
 		this.physics.add.collider(enemy, this.player, (e, p) => {
 			if (this.player.y < enemy.y) {
-				enemy.setFrame(1);
+				enemy.setFrame(TileSetKeys.ENEMY_1_DEFEATED);
 				enemy.body.checkCollision.none = true;
 				enemy.setGravityY(0);
 				this.time.delayedCall(1000, () => {
