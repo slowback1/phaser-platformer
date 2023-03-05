@@ -45,3 +45,4 @@ jobs:
           aws_bucket: ${{ secrets.AWS_BUCKET }}
           source_dir: 'build'
           destination_dir: ''
+
