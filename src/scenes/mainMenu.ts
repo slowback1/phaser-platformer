@@ -96,6 +96,7 @@ export default class MainMenu extends GameScene {
 			frameHeight: 32,
 			frameWidth: 32,
 		});
+		this.scene.start(SCENE_KEYS.LEVEL_1);
 	}
 
 	private getPreviousCursorPosition(): CursorPosition {

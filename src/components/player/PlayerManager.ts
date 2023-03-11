@@ -1,6 +1,6 @@
-import { ButtonType } from "../utils/controllerManager";
-import hasButton from "../utils/hasButton";
-import { Direction, Point } from "../types";
+import { ButtonType } from "../../utils/controllerManager";
+import hasButton from "../../utils/hasButton";
+import { Direction, Point } from "../../types";
 import PlayerSpriteManager from "./PlayerSpriteManager";
 
 export default class PlayerManager {

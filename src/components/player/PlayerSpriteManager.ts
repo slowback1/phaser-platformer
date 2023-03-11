@@ -1,4 +1,4 @@
-import { Direction } from "../types";
+import { Direction } from "../../types";
 
 export const PLAYER_SPRITE_FRAMES = {
 	IDLE: 0,
