@@ -1,5 +1,5 @@
 import PlayerSpriteManager, { PLAYER_SPRITE_FRAMES } from "./PlayerSpriteManager";
-import { Direction } from "../types";
+import { Direction } from "../../types";
 
 describe("PlayerSpriteManager", () => {
 	let mockOnSpriteChange: jest.Mock;

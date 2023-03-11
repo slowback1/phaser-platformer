@@ -1,6 +1,6 @@
 import PlayerManager from "./PlayerManager";
-import { ButtonType } from "../utils/controllerManager";
 import PlayerSpriteManager from "./PlayerSpriteManager";
+import { ButtonType } from "../../utils/controllerManager";
 
 describe("PlayerManager", () => {
 	let player: PlayerManager;
