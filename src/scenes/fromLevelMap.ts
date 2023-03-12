@@ -65,13 +65,15 @@ export default class FromLevelMap extends GameScene {
 	private drawTilesFromLevelMap(levelMap: ParsedLevelMap) {
 		let currentTile = levelMap.tiles[0][0];
 
+		const drawLayers = (tile: ParsedLevelMapTile) => tile.layers.forEach(layer => this.drawLayer(tile, layer));
+
 		while (currentTile.tileContext.next) {
-			currentTile.layers.forEach(layer => {
-				this.drawLayer(currentTile, layer);
-			});
+			drawLayers(currentTile);
 
 			currentTile = currentTile.tileContext.next;
 		}
+
+		drawLayers(currentTile);
 	}
 
 	private drawLayer(tile: ParsedLevelMapTile, layer: LevelMapTileLayer) {
