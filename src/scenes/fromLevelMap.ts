@@ -43,17 +43,12 @@ export default class FromLevelMap extends GameScene {
 	}
 
 	create() {
-		performance.mark("start");
 		this.drawBackground();
 
 		const levelMap = this.cache.json.get(ASSET_KEYS.LEVEL_MAP) as LevelMap;
 		const parsedLevelMap = new LevelMapParser(JSON.stringify(levelMap)).getParsedLevelMap();
 		this.setWorldBoundsByLevelMap(parsedLevelMap.meta);
 		this.drawTilesFromLevelMap(parsedLevelMap);
-		performance.mark("end");
-
-		const measurement = performance.measure("draw", "start", "end");
-		console.log(measurement);
 	}
 
 	private drawBackground() {
