@@ -95,6 +95,25 @@ describe("PlayerManager", () => {
 		const secondArgument = velocityYMock.mock.calls[velocityYMock.mock.calls.length - 1][0];
 		expect(secondArgument).toEqual(firstArgument);
 	});
+	it("allows the player to jump again after stomping on an enemy", () => {
+		player.handleButtonPress([ButtonType.A], { x: 0, y: 0 });
+		const firstArgument = velocityYMock.mock.calls[velocityYMock.mock.calls.length - 1][0];
+
+		player.handleButtonPress([], { x: 0, y: 120 });
+		player.handleEnemyTouch(
+			{
+				body: { y: 0, checkCollision: { none: true } },
+				setFrame: jest.fn(),
+				destroy: jest.fn(),
+			},
+			{ body: { y: -120 } },
+			{ delayedCall: jest.fn() },
+		);
+		player.handleButtonPress([ButtonType.A], { x: 0, y: 120 });
+		expect(velocityYMock).toHaveBeenCalled();
+		const secondArgument = velocityYMock.mock.calls[velocityYMock.mock.calls.length - 1][0];
+		expect(secondArgument).toEqual(firstArgument);
+	});
 
 	describe("player sprite management", () => {
 		it("calls onWalk when pressing the left button", () => {

@@ -3,6 +3,7 @@ import "phaser";
 import MainMenu from "./scenes/mainMenu";
 import Level1 from "./scenes/level1";
 import ControlManager from "./utils/controllerManager";
+import FromLevelMap from "./scenes/fromLevelMap";
 
 const windowWidth = window.innerWidth - 450;
 const windowHeight = window.innerHeight - 450;
@@ -13,7 +14,7 @@ const GameConfig: Phaser.Types.Core.GameConfig = {
 	height: windowHeight,
 	type: Phaser.AUTO,
 	parent: "app",
-	scene: [MainMenu, Level1] as Phaser.Types.Scenes.SettingsConfig[],
+	scene: [FromLevelMap] as Phaser.Types.Scenes.SettingsConfig[],
 	input: {
 		keyboard: true,
 	},
@@ -28,7 +29,7 @@ const GameConfig: Phaser.Types.Core.GameConfig = {
 	physics: {
 		default: "arcade",
 		arcade: {
-			debug: true,
+			debug: false,
 			gravity: { y: 0 },
 		},
 	},

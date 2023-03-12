@@ -69,9 +69,34 @@ export default class PlayerManager {
 		this.continueJump = false;
 	}
 
+	handleEnemyTouch(
+		enemy: {
+			body: { y: number; checkCollision: { none: boolean } };
+			setFrame: (number: number) => void;
+			destroy: () => void;
+		},
+		player: { body: { y: number } },
+		clock: Phaser.Time.Clock,
+	) {
+		let enemyY = enemy.body.y;
+		let playerY = player.body.y;
+
+		if (playerY < enemyY) {
+			this.hasJumped = false;
+			this.continueJump = false;
+
+			enemy.setFrame(1);
+			enemy.body.checkCollision.none = true;
+			clock.delayedCall(1000, () => {
+				enemy.destroy();
+			});
+		}
+	}
+
 	private hasJumped: boolean = false;
 	private continueJump: boolean = false;
 	private originPoint: Point = { x: 0, y: 0 };
+
 	private handleJump(position: Point) {
 		if (!this.hasJumped) {
 			this.originPoint = position;
